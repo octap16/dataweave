@@ -1,0 +1,4 @@
+invoiceId,vendorName,total,lineItem,lineItemAmount
+1,Amazon,100,Sneakers,75
+3,Amazon,3100,Shirt,325
+2,Walmart,38,Paper,10

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="6.1" doc:id="99a73a4a-0bf1-47a3-8aac-7469ee622cbc" >
+		<ee:transform doc:name="map" doc:id="4a97dff4-884a-4ae5-abfb-6438b4b88dc1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [{"Capital": "New Delhi","Country": "India"},
+	{"Capital": "Paris","Country": "France"}, 
+	{"Capital": "London","Country": "England"}
+]
+---
+arr reduce(value, acc=[]) ->
+ acc + {(value.Country): value.Capital}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="6.2" doc:id="3fa33937-3b0e-48b1-aca8-76866d426599" >
+		<ee:transform doc:name="filter" doc:id="0680eba2-9a9c-4eb3-93a4-83a502d864e9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [{"Capital": "New Delhi","Country": "India"},
+	{"Capital": "Paris","Country": "France"}, 
+	{"Capital": "London","Country": "England"}
+]
+---
+arr reduce(value, acc=[]) -> (
+ if(value.Capital=="London")(acc + {(value.Capital):value.Country}) 
+ else acc
+
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="6.3" doc:id="32880a97-4f4a-4578-ba87-c5d4d8a6c3fd">
+		<ee:transform doc:name="sizeOf" doc:id="4ee92c1d-a80f-420e-a6cd-934e786a5053">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var arr = [{"Capital": "New Delhi","Country": "India"},
+	{"Capital": "Paris","Country": "France"}, 
+	{"Capital": "London","Country": "England"}
+]
+---
+arr reduce(value, acc=0) ->(
+	acc+1
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="6.4" doc:id="a6aab374-a52d-4e5e-b207-09ca77bf2f46" >
+		<ee:transform doc:name="joinBy" doc:id="589d00cb-eed2-43a8-a350-37d05702c4e2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [{"Capital": "New Delhi","Country": "India"},
+	{"Capital": "Paris","Country": "France"}, 
+	{"Capital": "London","Country": "England"}
+]
+---
+arr reduce(value, acc="")->(
+	if(arr.Capital[0] == value.Capital) (acc ++ value.Country)
+	else (acc ++ "-"++ value.Country)
+) ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="6.5" doc:id="4969162d-877b-4e7a-87a2-cbe54d67a287" >
+		<ee:transform doc:name="maxBy" doc:id="31881f8d-8d68-4487-89f5-0d71e67c08c0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [{"Capital": "New Delhi","Country": "India"},
+	{"Capital": "Paris","Country": "France"}, 
+	{"Capital": "London","Country": "England"}
+]
+---
+arr reduce ((value, acc) ->
+	if(sizeOf(value.Country) > sizeOf(acc))
+	(value.Country)
+	else
+	acc
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="6.6" doc:id="8d996041-9bcf-4559-8fa3-605ff94db275" >
+		<ee:transform doc:name="Transform Message" doc:id="78bcbc8e-80ef-41cf-a968-2a008b568cd8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [
+  {"dev":  1},
+  {"qa":   2},
+  {"prod": 3}
+]
+---
+arr reduce ((item, acc) -> 
+	acc ++ item
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="6.7" doc:id="25af917a-2fef-40ad-bdd7-c4c49dfc08b6" >
+		<ee:transform doc:name="Transform Message" doc:id="d64d8053-6a18-4932-b849-a67b5782680e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+//[1,2,3,4,5] filter (($ mod 2) == 0) map ($ * 100)
+var arr = [1,2,3,4,5]
+---
+arr reduce ((item, acc=[]) ->
+	if((item mod 2)==0)
+	acc + item*100
+	else
+	acc
+)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="6.8" doc:id="ddc4794c-6fb6-44f6-8e44-f55df0e91b1e" >
+		<ee:transform doc:name="Transform Message" doc:id="0577586b-5ce1-420b-b130-8cd8d428b288" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var arr = [true, false, false, true, true]
+var accArr = [[],[]]
+//fun reduce ((item, acc=[]) ->
+//	if(item) (acc + [item])
+//	else acc + [item]
+//)
+//fun reduce<T>(array: T, acc: (item: T) -> Boolean): {success: Array<T>, failure: Array<T>} = {
+//  success: array filter (item) -> acc(item),
+//  failure: array filter (item) -> !acc(item)
+//}
+//fun partition<T>(array: Array<T>, condition: (item: T) -> Boolean): {success: Array<T>, failure: Array<T>} = {
+//  success: array filter (item) -> condition(item),
+//  failure: array filter (item) -> !condition(item)
+//}
+
+fun partition<T>(array: Array<T>, conditional:(item: T) -> Boolean) = [
+	
+		array reduce (value, acc=[])->
+		if(conditional(value)) acc + value
+		else acc
+	,
+	array reduce (value, acc=[])->
+		if(!conditional(value)) acc + value
+		else acc
+	
+]
+---
+partition([1,2,3,4], ((n) -> (n mod 2) == 0))]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

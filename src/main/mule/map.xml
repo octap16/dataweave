@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="1" doc:id="ac58ebbb-d961-4670-9866-29215b50f278" >
+		<ee:transform doc:name="Transform Message" doc:id="1029eb34-b418-4dc4-ad3e-551534fdeebf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [1,2,3,4,5]
+---
+[1,2,3,4,5] map{
+'$$':$+1	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="2" doc:id="89976133-a94b-40ac-8720-e19368ec20eb" >
+		<ee:transform doc:name="Transform Message" doc:id="026644e1-5d23-49a0-98e2-c27883f68dcd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+  { "id": 1, "name": "Archer" },
+  { "id": 2, "name": "Cyril"  },
+  { "id": 3, "name": "Pam"    }
+] map{
+	"id":$[0]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="3" doc:id="409988da-fb40-4729-afcb-0c3d3d2a0558" >
+		<ee:transform doc:name="Transform Message" doc:id="b1d232fb-d3e1-45c1-b4bc-81d83b2908de" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+  { "name": "Archer" },
+  { "name": "Cyril"  },
+  { "name": "Pam"    }
+]map{
+	"id":$$+1,
+	name:$[0]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="4" doc:id="846dc0ff-2a10-4700-b479-56a874c46812" >
+		<ee:transform doc:name="Transform Message" doc:id="8a1a6518-4121-4592-ba5d-96c513273054" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [
+  { 
+    "name": "Archer",
+    "jobs": [
+      { "type": "developer" },
+      { "type": "investor"  },
+      { "type": "educator"  } 
+    ] 
+  },
+  {
+    "name": "Cyril",
+    "jobs": [
+      { "type": "developer"    },
+      { "type": "entrepreneur" },
+      { "type1": "lion tamer"   }
+    ]
+  } 
+]
+fun addJob(value)=(
+	value map(obj, index)->
+		{num: index+1} ++ obj
+	
+)
+---
+arr map(value, index)->{
+	num: index+1,
+	"name": value.name,
+	"jobs":addJob(value.jobs)
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

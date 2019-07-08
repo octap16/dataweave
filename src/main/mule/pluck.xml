@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="4.1" doc:id="a6527562-4407-4407-9575-f091401dd10f" >
+		<ee:transform doc:name="Transform Message" doc:id="cdae750e-54fa-4437-a807-8b2727a5c4f3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var obj = {
+  "one":   "two",
+  "three": "four",
+  "five":  "six"
+  
+  }
+---
+obj pluck($)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="4.2" doc:id="c4239d35-2ea4-482a-b20b-53f6ac6a1a8e" >
+		<ee:transform doc:name="Transform Message" doc:id="f20c2668-8cf9-4657-8f6b-08af90f19e8d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var obj = {
+  "one":   "two",
+  "three": "four",
+  "five":  "six"
+}
+---
+obj pluck($$)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="4.3" doc:id="87c50fd0-dea4-40b6-af8a-6054a1a4934f" >
+		<ee:transform doc:name="Transform Message" doc:id="633fb48a-4131-4450-a56c-8cbe7f6a5795" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var obj = {
+  "one":   "two",
+  "three": "four",
+  "five":  "six"
+}
+---
+obj pluck (value,key) -> { (key):value} ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="4.4" doc:id="f71daadd-1025-48ed-9e07-d7135edeb645" >
+		<ee:transform doc:name="Transform Message" doc:id="3d8c0235-27eb-4e17-85af-cb53ad6faf8f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var obj = {
+  "one":   "two",
+  "three": "four",
+  "five":  "six"
+}
+
+fun pluckObj(obj)=(
+	obj pluck(value, key)->[
+		(key) , (value)
+		
+	]
+)
+
+
+---
+pluckObj(obj)
+	 
+	
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

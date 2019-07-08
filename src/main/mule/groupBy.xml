@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<flow name="groupByFlow" doc:id="264a4e64-64d7-4c7e-a055-2808b020cce9" >
+		<ee:transform doc:name="5.1" doc:id="ba613f11-e5e4-452d-bfb6-7b1a41bb0edd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var invoices = [
+  {
+    "invoiceId": 1,
+    "amount":    100 },
+  {
+    "invoiceId": 2,
+    "amount":    200 },
+  {
+    "invoiceId": 3,
+    "amount":    300 }]
+
+var allocations = [
+  {
+    "allocationId":    1,
+    "invoiceId":       1,
+    "allocationAmount": 50 },
+  {
+    "allocationId":    2,
+    "invoiceId":       1,
+    "allocationAmount": 50 },
+  {
+    "allocationId":    3,
+    "invoiceId":       2,
+    "allocationAmount": 100 },
+  {
+    "allocationId":    4,
+    "invoiceId":       2,
+    "allocationAmount": 100 },
+  {
+    "allocationId":    5,
+    "invoiceId":       3,
+    "allocationAmount": 150 },
+  {
+    "allocationId":    6,
+    "invoiceId":       3,
+    "allocationAmount": 150 }]
+
+fun result(invoices, allocations) = 
+	invoices map(value, index) -> {
+		invoiceId: value.invoiceId,
+		amount: value.amount,
+		allocations: allocations groupBy(value, index) -> index
+} 
+--- 
+result(invoices, allocations)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="5.2" doc:id="0a1f3609-2dc7-4f4b-9771-7c33c711cd48" >
+		<scheduler doc:name="Scheduler" doc:id="ff0acda4-5ddd-468e-bfd9-ab9c2c384399" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="5" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</scheduler>
+		<file:read doc:name="Read" doc:id="58c6d046-da34-4b4b-bb7f-d6451f2240a6" path="C:\Users\ovdov\AnypointStudio\studio-workspace11\dataweave\input_csv.csv" outputMimeType="application/csv"/>
+		<ee:transform doc:name="Transform Message" doc:id="0c0e5284-4bd4-4b11-b69c-13c217bb892a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	invoiceId: payload01.invoiceId as Number,
+	vendorName: payload01.vendorName,
+	total: payload01.total as Number,
+	lineItems: [{
+		item: payload01.lineItem,
+		amount: payload01.lineItemAmount as Number
+	}]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="29f8721c-d9ba-4904-ac61-95676a73ac0d" />
+	</flow>
+	<flow name="5.3" doc:id="5bc88eca-e2b8-492c-a9af-f6ea9cbf5474" >
+		<ee:transform doc:name="Transform Message" doc:id="1e17fb52-2e98-40a0-88e2-24a4eafa0405" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var inputPayload =
+[
+  { "merchantName": "HelloFresh"    },
+  { "merchantName": "Amazon"        },
+  { "merchantName": "Walmart"       },
+  { "merchantName": "Guitar Center" }
+]
+
+fun check(value)=(
+	if (sizeOf(value.merchantName)>=10) ("true")
+	else ("false")
+)
+fun res (arr) =
+	arr groupBy sizeOf($.merchantName) > 10
+---
+res(inputPayload) ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

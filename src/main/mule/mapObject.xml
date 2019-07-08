@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="3.1" doc:id="88db2626-4de6-42d9-a18d-05bea871415f" >
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="d0290593-a081-4549-8cba-cc753c6ea692" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var obj = {
+  "one":   "two",
+  "three": "four",
+  "five":  "six"
+}
+---
+obj mapObject(value, index)->{
+	(upper(index)):upper(value)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="3.3" doc:id="578e6921-dbe5-43bd-994e-f24cb0d563aa" >
+		<ee:transform doc:name="filterObject" doc:id="afb252c6-c54b-46e8-b038-b626bc03544e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var obj = {
+  "one":   "two",
+  "three": null,
+  "five":  null
+}
+var filterOption = "a,b" splitBy ','
+---
+obj filterObject ((value)->value != null)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

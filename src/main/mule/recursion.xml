@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="7.1" doc:id="819b8b1c-2e6e-47a7-af48-0e63c50a1a46" >
+		<ee:transform doc:name="Transform Message" doc:id="348a1263-5706-4279-88e9-ba385ccbf87a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Strings
+fun strToCharAr(str) = (
+	if (str=="" or str== null) []
+	else (
+		[str[0]]++
+		strToCharAr(substringAfter(str,""))
+	)
+)
+---
+strToCharAr(null)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="7.2" doc:id="1aad76f7-8c65-41e0-a813-092a241cbde6" >
+		<ee:transform doc:name="Transform Message" doc:id="7adc1f71-5629-4b74-997a-4552aa37b507" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Arrays
+import * from dw::core::Strings
+
+
+//divideBy 2
+fun chunkStr(str, num) = (
+chunkRec(str, num) divideBy num
+)
+
+fun chunkRec(str, num)=(
+	if( str == null)[]
+	else (
+str[0] +
+		chunkRec(substringAfter(str,""), num)
+	)
+)
+
+//fun chunkStrq(str, num ) = (
+//using(arrr = [])
+//	if( str == null or str == "")[]
+//	else (
+//	str splitBy("") divideBy num
+//	)
+//)
+---
+chunkStr("yoyoyo", 2)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="7.3" doc:id="dba549f0-987e-44d4-b607-753d46e066f7" >
+		<ee:transform doc:name="Transform Message" doc:id="8d6a47a4-807d-4c81-8b82-2e838186bb9b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+fun range(start,end) = (
+	if(start==end)[]
+	else [start] ++ range(start+1, end)
+)
+fun range(start,end, step) = (
+	if(start==end)[]
+	else if((start mod step ) == 0 ) range(start+1, end, step)
+	else [start] ++ range(start+1, end, step)
+)
+//range(1,6,2)
+---
+range(1,6,2)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

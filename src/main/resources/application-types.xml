@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="simpleCSV" format="csv">
+      <types:shape format="weave"><![CDATA[%dw 2.0
+
+type simpleCSV = Array<{|  invoiceId: String,   vendorName: String,   total: String,   lineItem: String,   lineItemAmount: String|}>
+
+]]></types:shape>
+      <types:properties>
+        <types:property name="headerLineNumber" value="0"/>
+        <types:property name="header" value="true"/>
+        <types:property name="isQuotedString" value="false"/>
+      </types:properties>
+    </types:type>
+    <types:type name="simpleJSON" format="json">
+      <types:shape format="weave" example="examples/dataWeave_5.2.json"><![CDATA[%dw 2.0
+
+type simpleJSON = Array<{|  invoiceId: Number {"typeId": "int"},   vendorName: String,   total: Number {"typeId": "int"},   lineItems: Array<{|    item: String,     amount: Number {"typeId": "int"}  |}>
+|}> {"example": "[{\"invoiceId\":1,\"vendorName\":\"Amazon\",\"total\":100,\"lineItems\":[{\"item\":\"Sneakers\",\"amount\":75},{\"item\":\"Shirt\",\"amount\":25}]},{\"invoiceId\":2,\"vendorName\":\"Walmart\",\"total\":38,\"lineItems\":[{\"item\":\"Paper\",\"amount\":10},{\"item\":\"Towel\",\"amount\":28}]}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#0c0e5284-4bd4-4b11-b69c-13c217bb892a">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="simpleCSV"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="simpleJSON"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

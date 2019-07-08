@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="2.1" doc:id="9fdaec80-fa5d-4cd1-80fa-e47f6365e7ee" >
+		<ee:transform doc:name="Transform Message" doc:id="377f332b-a118-43c1-bf16-e8d3196749fd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr=[1,2,3,4,5]
+---
+arr filter (value, index) -> ((value mod 2) != 1)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="2.3" doc:id="b85549e6-e559-4a7d-9bd5-c36787bf4573" >
+		<ee:transform doc:name="Transform Message" doc:id="265bf3d1-e42e-4a43-83fa-afde38a071ce" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [
+  {
+    "id": 1,
+    "status": "waiting"
+  },
+  {
+    "id": 2,
+    "status": "processed"
+  },
+  {
+    "id": 3,
+    "status": "waiting"
+  }
+]
+fun filterArr(arr) = (
+	arr filter (value, index) -> (value.status != 'processed')
+)
+---
+filterArr(arr)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="2.4" doc:id="a685a392-32b8-402e-8d6e-b92eb1c96612" >
+		<ee:transform doc:name="Transform Message" doc:id="eca7ab77-2c35-42a6-bb82-be7fe2ff864d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr = [
+  "starting", 
+  "waiting", 
+  "deleted", 
+  "processing", 
+  "processed"
+]
+---
+arr filter (value, index) ->(value !="deleted" and value != "processed")]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
