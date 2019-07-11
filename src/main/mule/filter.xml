@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 output application/json
 var arr=[1,2,3,4,5]
 ---
-arr filter (value, index) -> ((value mod 2) != 1)]]></ee:set-payload>
+ arr filter (value, index) -> ((value mod 2) != 1)]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>
